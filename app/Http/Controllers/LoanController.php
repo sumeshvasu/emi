@@ -121,6 +121,19 @@ class LoanController extends Controller
     }
 
     /**
+     * Get Period.
+     *
+     * @param string $startDate
+     * @param string $endDate
+     *
+     * @return object
+     */
+    public function getPeriods($startDate, $endDate)
+    {
+        return new CarbonPeriod(Carbon::parse($startDate)->startOfMonth(), '1 month', Carbon::parse($endDate)->startOfMonth());
+    }
+
+    /**
      * Generate Month List From Date.
      *
      * @param string $startDate
@@ -130,7 +143,7 @@ class LoanController extends Controller
      */
     private function getMonthListFromDate($startDate, $endDate)
     {
-        $period = new CarbonPeriod(Carbon::parse($startDate)->startOfMonth(), '1 month', Carbon::parse($endDate)->startOfMonth());
+        $period = $this->getPeriods($startDate, $endDate);
 
         foreach ($period as $month) {
             $months[] = $month->format('Y_M');
@@ -152,7 +165,7 @@ class LoanController extends Controller
         $months = [];
 
         foreach ($loanDetails as $value) {
-            $period = new CarbonPeriod(Carbon::parse($value->first_payment_date)->startOfMonth(), '1 month', Carbon::parse($value->last_payment_date)->startOfMonth());
+            $period = $period = $this->getPeriods($value->first_payment_date, $value->last_payment_date);
 
             foreach ($period as $month) {
                 $months[] = $month->format('d-m-Y');
